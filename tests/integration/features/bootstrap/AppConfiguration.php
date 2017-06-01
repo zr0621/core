@@ -22,7 +22,7 @@
  *
  */
 
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 use TestHelpers\AppConfigHelper;
 use TestHelpers\OcsApiHelper;
 
@@ -130,7 +130,7 @@ trait AppConfiguration {
 	 * @return string latest retrieved capabilities in XML format
 	 */
 	public function getCapabilitiesXml() {
-		return $this->response->xml()->data->capabilities;
+		return $this->getResponseXml()->data->capabilities;
 	}
 
 	/**
