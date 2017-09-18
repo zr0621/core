@@ -711,6 +711,11 @@ abstract class Common implements Storage, ILockingStorage, IVersionedStorage {
 		return $this->fopen($v['storage_location'], 'r');
 	}
 
+	public function getContentOfVersionAsStream($internalPath, $versionId) {
+		$v = $this->getVersion($internalPath, $versionId);
+		return $this->fopen($v['storage_location'], 'r');
+	}
+
 	public function restoreVersion($internalPath, $versionId) {
 		// KISS implementation
 		if (!\OC_App::isEnabled('files_versions')) {
