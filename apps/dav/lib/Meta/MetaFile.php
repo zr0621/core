@@ -23,9 +23,11 @@
 namespace OCA\DAV\Meta;
 
 
+use OC\Files\Meta\MetaFileVersionNode;
+use OCA\DAV\Files\ICopySource;
 use Sabre\DAV\File;
 
-class MetaFile extends File {
+class MetaFile extends File implements ICopySource {
 
 	/** @var \OCP\Files\File */
 	private $file;
@@ -76,5 +78,12 @@ class MetaFile extends File {
 
 	public function getETag() {
 		return $this->file->getEtag();
+	}
+
+	public function copy($path) {
+		if ($this->file instanceof MetaFileVersionNode) {
+			return $this->file->copy($path);
+		}
+		return false;
 	}
 }

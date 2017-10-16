@@ -23,10 +23,7 @@
 namespace OCA\DAV\Meta;
 
 
-use OCP\Files\File;
-use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use Sabre\DAV\Collection;
 use Sabre\DAV\Exception\MethodNotAllowed;
