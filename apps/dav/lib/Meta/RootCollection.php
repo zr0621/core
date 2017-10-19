@@ -23,6 +23,7 @@
 namespace OCA\DAV\Meta;
 
 
+use OC\Files\Meta\MetaFileIdNode;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use Sabre\DAV\Collection;
@@ -49,8 +50,11 @@ class RootCollection extends Collection {
 	public function getChild($name) {
 		try {
 			$child = $this->rootFolder->get("meta/$name");
-			return MetaFolder::nodeFactory($child);
-		} catch (NotFoundException $ex) {
+			if (!$child instanceof MetaFileIdNode) {
+				throw new NotFound();
+			}
+			return new MetaFolder($child);
+		} catch (NotFoundException $exception) {
 			throw new NotFound();
 		}
 	}

@@ -27,6 +27,12 @@ use OC\Files\Meta\MetaFileVersionNode;
 use OCA\DAV\Files\ICopySource;
 use Sabre\DAV\File;
 
+/**
+ * Class MetaFile
+ * This is a Sabre based implementation of a file living in the /meta resource.
+ *
+ * @package OCA\DAV\Meta
+ */
 class MetaFile extends File implements ICopySource {
 
 	/** @var \OCP\Files\File */
