@@ -64,6 +64,8 @@ class RootCollection extends SimpleCollection {
 		$calendarRoot->disableListing = $disableListing;
 		$publicCalendarRoot = new PublicCalendarRoot($caldavBackend);
 		$publicCalendarRoot->disableListing = $disableListing;
+		$publicFilesRoot = new Files\PublicFiles\RootCollection();
+		$publicFilesRoot->disableListing = $disableListing;
 
 		$systemTagCollection = new SystemTag\SystemTagsByIdCollection(
 			\OC::$server->getSystemTagManager(),
@@ -106,7 +108,8 @@ class RootCollection extends SimpleCollection {
 				$systemTagCollection,
 				$systemTagRelationsCollection,
 				$uploadCollection,
-				$avatarCollection
+				$avatarCollection,
+				$publicFilesRoot
 		];
 
 		parent::__construct('root', $children);
