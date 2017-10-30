@@ -708,11 +708,6 @@ abstract class Common implements Storage, ILockingStorage, IVersionedStorage {
 
 	public function getContentOfVersion($internalPath, $versionId) {
 		$v = $this->getVersion($internalPath, $versionId);
-		return $this->file_get_contents($v['storage_location']);
-	}
-
-	public function getContentOfVersionAsStream($internalPath, $versionId) {
-		$v = $this->getVersion($internalPath, $versionId);
 		return $this->fopen($v['storage_location'], 'r');
 	}
 
