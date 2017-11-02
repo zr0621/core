@@ -230,13 +230,22 @@ class DecryptAllTest extends TestCase {
 		$this->invokePrivate($instance, 'input', [$this->inputInterface]);
 		$this->invokePrivate($instance, 'output', [$this->outputInterface]);
 
+
+		$function = function (IUser $user)  {
+			$users[] = $user->getUID();
+		};
+
 		if (empty($user)) {
+			$progress = new ProgressBar($this->outputInterface);
 			$this->userManager->expects($this->once())
-				->method('getBackends')
-				->willReturn([$this->userInterface]);
-			$this->userInterface->expects($this->any())
-				->method('getUsers')
-				->willReturn(['user1', 'user2']);
+				->method('countSeenUsers')
+				->willReturn(2);
+			$this->userManager->expects($this->once())
+				->method('callForSeenUsers')
+				->will($this->returnCallback(function() use ($instance, $progress) {
+					$this->invokePrivate($instance, 'decryptUsersFiles', ['user1', $progress, '']);
+					$this->invokePrivate($instance, 'decryptUsersFiles', ['user2', $progress, '']);
+			}));
 			$instance->expects($this->at(0))
 				->method('decryptUsersFiles')
 				->with('user1');
