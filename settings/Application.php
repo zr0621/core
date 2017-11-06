@@ -183,7 +183,7 @@ class Application extends App {
 		$container->registerService('SubadminMiddleware', function(IContainer $c){
 			return new SubadminMiddleware(
 				$c->query('ControllerMethodReflector'),
-				$c->query('IsSubAdmin')
+				$c->query('HasSubAdminPrivileges')
 			);
 		});
 		// Execute middlewares
@@ -215,13 +215,15 @@ class Application extends App {
 			return \OC_User::isAdminUser(\OC_User::getUser());
 		});
 		/** FIXME: Remove once OC_SubAdmin is non-static and mockable */
-		$container->registerService('IsSubAdmin', function(IContainer $c) {
+		$container->registerService('HasSubAdminPrivileges', function(IContainer $c) {
+			$hasUserManagementPrivileges = false;
 			$userObject = \OC::$server->getUserSession()->getUser();
-			$isSubAdmin = false;
 			if($userObject !== null) {
-				$isSubAdmin = \OC::$server->getGroupManager()->getSubAdmin()->isSubAdmin($userObject);
+				//Admin and SubAdmins are allowed to access user management
+				$hasUserManagementPrivileges = \OC::$server->getGroupManager()->isAdmin($userObject->getUID())
+					|| \OC::$server->getGroupManager()->getSubAdmin()->isSubAdmin($userObject);
 			}
-			return $isSubAdmin;
+			return $hasUserManagementPrivileges;
 		});
 		$container->registerService('Mailer', function(IContainer $c) {
 			return $c->query('ServerContainer')->getMailer();

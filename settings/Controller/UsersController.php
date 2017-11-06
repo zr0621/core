@@ -797,6 +797,8 @@ class UsersController extends Controller {
  	 */
 	public function setEmailAddress($id, $mailAddress) {
 		$user = $this->userManager->get($id);
+
+		// Only Admin and SubAdmins are allowed to set email
 		if($this->isAdmin ||
 			($this->groupManager->getSubAdmin()->isSubAdmin($this->userSession->getUser()) &&
 				$this->groupManager->getSubAdmin()->isUserAccessible($this->userSession->getUser(), $user))) {

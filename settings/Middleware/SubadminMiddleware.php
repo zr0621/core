@@ -38,18 +38,18 @@ use OCP\AppFramework\Middleware;
  */
 class SubadminMiddleware extends Middleware {
 	/** @var bool */
-	protected $isSubAdmin;
+	protected $hasSubAdminPrivileges;
 	/** @var ControllerMethodReflector */
 	protected $reflector;
 
 	/**
 	 * @param ControllerMethodReflector $reflector
-	 * @param bool $isSubAdmin
+	 * @param bool $hasSubAdminPrivileges
 	 */
 	public function __construct(ControllerMethodReflector $reflector,
-								$isSubAdmin) {
+								$hasSubAdminPrivileges) {
 		$this->reflector = $reflector;
-		$this->isSubAdmin = $isSubAdmin;
+		$this->hasSubAdminPrivileges = $hasSubAdminPrivileges;
 	}
 
 	/**
@@ -60,7 +60,7 @@ class SubadminMiddleware extends Middleware {
 	 */
 	public function beforeController($controller, $methodName) {
 		if(!$this->reflector->hasAnnotation('NoSubadminRequired')) {
-			if(!$this->isSubAdmin) {
+			if(!$this->hasSubAdminPrivileges) {
 				throw new NotAdminException('Logged in user must be a subadmin');
 			}
 		}
