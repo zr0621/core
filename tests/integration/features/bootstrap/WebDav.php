@@ -188,7 +188,6 @@ trait WebDav {
 	 * @param string $content
 	 */
 	public function downloadedContentShouldBe($content) {
-		die();
 		PHPUnit_Framework_Assert::assertEquals($content, (string)$this->response->getBody());
 	}
 
@@ -541,7 +540,6 @@ trait WebDav {
 		$fileId = $this->getFileIdForPath($user, $path);
 		$client = $this->getSabreClient($user);
 		$versions = array_keys($this->listVersionFolder($user, '/meta/'.$fileId.'/v', 1));
-		var_dump($versions[1], $this->makeSabrePath($user, $path));die();
 		$client->request('COPY', $versions[1], null, ['Destination' => $this->makeSabrePath($user, $path)]);
 	}
 
