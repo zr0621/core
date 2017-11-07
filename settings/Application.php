@@ -131,7 +131,6 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('GroupManager'),
 				$c->query('UserSession'),
-				$c->query('IsAdmin'),
 				$c->query('L10N')
 			);
 		});
@@ -144,7 +143,6 @@ class Application extends App {
 				$c->query('UserSession'),
 				$c->query('Config'),
 				$c->query('SecureRandom'),
-				$c->query('IsAdmin'),
 				$c->query('L10N'),
 				$c->query('Logger'),
 				$c->query('Defaults'),
@@ -183,7 +181,8 @@ class Application extends App {
 		$container->registerService('SubadminMiddleware', function(IContainer $c){
 			return new SubadminMiddleware(
 				$c->query('ControllerMethodReflector'),
-				$c->query('HasSubAdminPrivileges')
+				$c->query('GroupManager'),
+				$c->query('UserSession')
 			);
 		});
 		// Execute middlewares
@@ -209,21 +208,6 @@ class Application extends App {
 		});
 		$container->registerService('UserSession', function(IContainer $c) {
 			return $c->query('ServerContainer')->getUserSession();
-		});
-		/** FIXME: Remove once OC_User is non-static and mockable */
-		$container->registerService('IsAdmin', function(IContainer $c) {
-			return \OC_User::isAdminUser(\OC_User::getUser());
-		});
-		/** FIXME: Remove once OC_SubAdmin is non-static and mockable */
-		$container->registerService('HasSubAdminPrivileges', function(IContainer $c) {
-			$hasUserManagementPrivileges = false;
-			$userObject = \OC::$server->getUserSession()->getUser();
-			if($userObject !== null) {
-				//Admin and SubAdmins are allowed to access user management
-				$hasUserManagementPrivileges = \OC::$server->getGroupManager()->isAdmin($userObject->getUID())
-					|| \OC::$server->getGroupManager()->getSubAdmin()->isSubAdmin($userObject);
-			}
-			return $hasUserManagementPrivileges;
 		});
 		$container->registerService('Mailer', function(IContainer $c) {
 			return $c->query('ServerContainer')->getMailer();
