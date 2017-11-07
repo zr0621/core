@@ -27,6 +27,7 @@ use Behat\Gherkin\Node\TableNode;
 use Page\FilesPage;
 use SensioLabs\Behat\PageObjectExtension\PageObject\Exception\ElementNotFoundException;
 use TestHelpers\AppConfigHelper;
+use Guzzle\Http\Message\Header;
 
 require_once 'bootstrap.php';
 
@@ -121,7 +122,69 @@ class SharingContext extends RawMinkContext implements Context {
 			$name, $this->getSession()
 		);
 	}
-
+	/**
+	 * @Given I create a new public link for the file/folder :name
+	 * @param string $name
+	 * @return void
+	 */
+	public function iCreateANewPublicLinkFor($name) {
+		$this->iCreateANewPublicLinkForWith($name);
+	}
+	/**
+	 * @Given I create a new public link for the file/folder :name with
+	 * @param string $name
+	 * @param TableNode $settings table with the settings and no header
+	 *                            possible settings: name, permission,
+	 *                                               password, expiration, email
+	 *                            the permissions values has to be written exactly
+	 *                            the way its written in the UI
+	 * @return void
+	 */
+	public function iCreateANewPublicLinkForWith(
+		$name, TableNode $settings = null
+	) {
+		$this->filesPage->waitTillPageIsloaded($this->getSession());
+		//close any open sharing dialog
+		//if there is no dialog open and we try to close it
+		//an exception will be thrown, but we do not care
+		try {
+			$this->filesPage->closeSharingDialog();
+		} catch (Exception $e) {
+		}
+		$this->sharingDialog = $this->filesPage->openSharingDialog(
+			$name, $this->getSession()
+		);
+		$publicShareTab = $this->sharingDialog->openPublicShareTab();
+		if (!is_null($settings)) {
+			$settingsArray = $settings->getRowsHash();
+			if (!isset($settingsArray['name'])) {
+				$settingsArray['name'] = null;
+			}
+			if (!isset($settingsArray['permission'])) {
+				$settingsArray['permission'] = null;
+			}
+			if (!isset($settingsArray['password'])) {
+				$settingsArray['password'] = null;
+			}
+			if (!isset($settingsArray['expiration'])) {
+				$settingsArray['expiration'] = null;
+			}
+			if (!isset($settingsArray['email'])) {
+				$settingsArray['email'] = null;
+			}
+			$publicShareTab->createLink(
+				$this->getSession(),
+				$settingsArray ['name'],
+				$settingsArray ['permission'],
+				$settingsArray ['password'],
+				$settingsArray ['expiration'],
+				$settingsArray ['email']
+			);
+		} else {
+			$publicShareTab->createLink($this->getSession());
+		}
+	}
+	
 	/**
 	 * @Given I close the share dialog
 	 * @return void
