@@ -80,26 +80,14 @@ pipeline:
       matrix:
         TEST_SUITE: coverage
 
-  codecov_sqlite:
+  codecov:
     image: plugins/codecov:1
     secrets: [codecov_token]
     pull: true
     files:
-     - tests/autotest-clover-sqlite.xml
+     - tests/autotest-clover-${DB_TYPE}.xml
     flags:
-     - sqlite
-    when:
-      matrix:
-        TEST_SUITE: coverage
-
-  codecov_mysql:
-    image: plugins/codecov:1
-    secrets: [codecov_token]
-    pull: true
-    files:
-     - tests/autotest-clover-mysql.xml
-    flags:
-     - mysql
+     - ${DB_TYPE}
     when:
       matrix:
         TEST_SUITE: coverage
